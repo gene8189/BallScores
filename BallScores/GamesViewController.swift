@@ -103,7 +103,7 @@ class GamesViewController: UIViewController, UITableViewDelegate, UITableViewDat
     
     
 func importJSON() {
-    let url = URL(string: "https://balldontlie.io/api/v1/games?page=1951")!
+    let url = URL(string: "https://balldontlie.io/api/v1/games?page=1950")!
    let session = URLSession.shared
    let task = session.dataTask(with: url) { data,response,error in
        if error != nil || data == nil {
