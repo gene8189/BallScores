@@ -15,7 +15,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        // Override point for customization after application launch.
+        let applicationDocumentsDirectory: URL = {
+            let paths = FileManager.default.urls(for: .documentationDirectory, in: .userDomainMask)
+            return paths[0]
+        }()
+        print(applicationDocumentsDirectory)
         return true
     }
 
