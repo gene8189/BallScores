@@ -23,8 +23,9 @@ class GamesViewController: UIViewController, UITableViewDelegate, UITableViewDat
         let sort1 = NSSortDescriptor(key: "id", ascending: false)
         let sort2 = NSSortDescriptor(key: "gameTime", ascending: false)
         fetchRequest.sortDescriptors = [sort1,sort2]
+        fetchRequest.fetchBatchSize = 20
         
-        let fetchResultsController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: self.coreDataStack.managedContext, sectionNameKeyPath: "gameTime", cacheName: "Time")
+        let fetchResultsController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: self.coreDataStack.managedContext, sectionNameKeyPath: "gameTime", cacheName: "Times")
         fetchResultsController.delegate = self
         return fetchResultsController
     }()
@@ -52,7 +53,7 @@ extension GamesViewController {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
         let date = dateFormatter.date(from: date)
-        dateFormatter.dateFormat = "MMM dd,yyyy"
+        dateFormatter.dateFormat = "MMM dd, yyyy"
         return dateFormatter.string(from: date!)
     }
     
@@ -147,11 +148,13 @@ extension GamesViewController {
 
 //MARK: - Table View Data Source
 extension GamesViewController {
+    func numberOfSections(in tableView: UITableView) -> Int {
+        return fetchedResultsController.sections!.count
+    }
+    
    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-       if let count = fetchedResultsController.sections?.first?.numberOfObjects {
-           return count
-       }
-       return 0
+    let sectionInfo = fetchedResultsController.sections![section]
+    return sectionInfo.numberOfObjects
    }
    
    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -168,28 +171,80 @@ extension GamesViewController {
        return cell
    }
     
+    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        let sectionInfo = fetchedResultsController.sections![section]
+        return sectionInfo.name.uppercased()
+    }
+
 }
+
 
 
 //MARK: - Fetch Controller Data Source
 extension GamesViewController: NSFetchedResultsControllerDelegate {
-    func controllerWillChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
-//        print("Updating table....")
-        tableView.beginUpdates()
-    }
+func controllerWillChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
+    print("*** controllerWillChangeContent")
+    tableView.beginUpdates()
+}
+
+
+func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange anObject: Any, at indexPath: IndexPath?, for type: NSFetchedResultsChangeType, newIndexPath: IndexPath?) {
     
-    func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange anObject: Any, at indexPath: IndexPath?, for type: NSFetchedResultsChangeType, newIndexPath: IndexPath?) {
-        switch type {
-        case .insert: tableView.insertRows(at: [newIndexPath!], with: .automatic)
-        case .delete: tableView.deleteRows(at: [indexPath!], with: .automatic)
-        default: break
-        }
+    switch type {
+    case .insert:
+        print("*** NSFetchedRequestChangeInsert (object)")
+        tableView.insertRows(at: [newIndexPath!], with: .fade)
+        
+    case .update:
+        print("****NSFetchResultChangeUpdate")
+    
+    case .delete:
+        print("***NSFetchedRequestChangeDelete (object)")
+        tableView.deleteRows(at: [indexPath!], with: .fade)
+    
+    case .move:
+        print("***NSFetchedResultsChangeMove (object)")
+        tableView.deleteRows(at: [indexPath!], with: .fade)
+        tableView.insertRows(at: [newIndexPath!], with: .fade)
+    
+    @unknown default:
+        fatalError("Unhandled switch case of NSFetchedResultsChangeType")
+    }
+}
+
+
+//     func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange anObject: Any, at indexPath: IndexPath?, for type: NSFetchedResultsChangeType, newIndexPath: IndexPath?) {
+//            switch type {
+//            case .insert: tableView.insertRows(at: [newIndexPath!], with: .automatic)
+//            case .delete: tableView.deleteRows(at: [indexPath!], with: .automatic)
+//            default: break
+//            }
 //        print("Did change table....")
-    }
+
+func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange sectionInfo: NSFetchedResultsSectionInfo, atSectionIndex sectionIndex: Int, for type: NSFetchedResultsChangeType) {
+    switch type {
+    case .insert:
+        print("***NSFetchedResultsChangeInsert (section)")
+        tableView.insertSections(IndexSet(integer: sectionIndex), with: .fade)
+        
+    case .delete:
+        print("***NSFetchedResultsChangeDelete (section)")
+        tableView.deleteSections(IndexSet(integer: sectionIndex), with: .fade)
+        
+    case .update:
+        print("***NSFetchedResultsChangeUpdate (section)")
+    case .move:
+        print("***NSFetchedResultsChangeMove (section)")
     
-    func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
-//        print("Ending update....")
-        tableView.endUpdates()
+    @unknown default:
+    fatalError("Unhandled switch case of NSFetchedResultsChangeType")
+    }
+
+}
+
+func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
+    print("*** controllerDidChangeContent")
+    tableView.endUpdates()
     }
 }
 
