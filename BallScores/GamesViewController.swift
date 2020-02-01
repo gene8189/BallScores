@@ -20,13 +20,15 @@ class GamesViewController: UIViewController, UITableViewDelegate, UITableViewDat
     lazy var coreDataStack = CoreDataStack(modelName: "BallScores")
     lazy var fetchedResultsController: NSFetchedResultsController<Game> = {
         let fetchRequest = NSFetchRequest<Game>(entityName: "Game")
-        let sortDescriptor = NSSortDescriptor(key: "id", ascending: false)
-        fetchRequest.sortDescriptors = [sortDescriptor]
+        let sort1 = NSSortDescriptor(key: "id", ascending: false)
+        let sort2 = NSSortDescriptor(key: "gameTime", ascending: false)
+        fetchRequest.sortDescriptors = [sort1,sort2]
         
-        let fetchResultsController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: self.coreDataStack.managedContext, sectionNameKeyPath: nil, cacheName: nil)
+        let fetchResultsController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: self.coreDataStack.managedContext, sectionNameKeyPath: "gameTime", cacheName: "Time")
         fetchResultsController.delegate = self
         return fetchResultsController
     }()
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -48,7 +50,7 @@ extension GamesViewController {
 extension GamesViewController {
    func convertDateFormater(_ date: String) -> String {
         let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyy-MM-dd"
+        dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
         let date = dateFormatter.date(from: date)
         dateFormatter.dateFormat = "MMM dd,yyyy"
         return dateFormatter.string(from: date!)
@@ -116,10 +118,6 @@ extension GamesViewController {
         let homeTeam = jsonDictionary["home_team"] as! [String:Any]
         let visitorTeam = jsonDictionary["visitor_team"] as! [String:Any]
             
-        let dateArray = jsonDictionary["date"] as? String
-        let dateFormatter = DateFormatter()
-            dateFormatter.dateFormat = "yyyy-mm-dd'T'HH:mm:ss.SSSZ"
-        
         let game = Game(context: self.coreDataStack.managedContext)
         game.id = jsonDictionary["id"] as! Int32
         game.homeTeamScore = jsonDictionary["home_team_score"] as! Int32
@@ -127,7 +125,8 @@ extension GamesViewController {
         game.season = jsonDictionary["season"] as! Int32
         let status = jsonDictionary["status"] as! String
         game.status = status.uppercased()
-
+        game.gameTime = convertDateFormater((jsonDictionary["date"] as? String)!)
+            
         let visitor = VisitorTeam(context: self.coreDataStack.managedContext)
        visitor.fullName = visitorTeam["full_name"] as? String
        visitor.abbreviation = visitorTeam["abbreviation"] as? String
@@ -141,6 +140,7 @@ extension GamesViewController {
        game.homeTeam = home
         }
           self.coreDataStack.saveContext()
+        
     }
     
 }
@@ -159,11 +159,12 @@ extension GamesViewController {
        let game = fetchedResultsController.object(at: indexPath)
        cell.homeScoreLabel.text = String(game.homeTeamScore)
        cell.visitorScoreLabel.text = String(game.visitorTeamScore)
-       cell.statusLabel.text = game.status!
+       cell.statusLabel.text = game.status
        cell.homeAbbreviationLabel.text = game.homeTeam?.abbreviation
        cell.visitorAbbreviationLabel.text = game.visitorTeam?.abbreviation
        cell.homeImageView.image = UIImage(named: game.homeTeam!.fullName!)
        cell.visitorImageView.image = UIImage(named: game.visitorTeam!.fullName!)
+        
        return cell
    }
     
@@ -173,7 +174,7 @@ extension GamesViewController {
 //MARK: - Fetch Controller Data Source
 extension GamesViewController: NSFetchedResultsControllerDelegate {
     func controllerWillChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
-        print("Updating table....")
+//        print("Updating table....")
         tableView.beginUpdates()
     }
     
@@ -183,11 +184,11 @@ extension GamesViewController: NSFetchedResultsControllerDelegate {
         case .delete: tableView.deleteRows(at: [indexPath!], with: .automatic)
         default: break
         }
-        print("Did change table....")
+//        print("Did change table....")
     }
     
     func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
-        print("Ending update....")
+//        print("Ending update....")
         tableView.endUpdates()
     }
 }
