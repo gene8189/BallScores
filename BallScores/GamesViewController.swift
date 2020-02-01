@@ -11,6 +11,8 @@ import CoreData
 
 class GamesViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
 
+    // make
+    
     
     //MARK: - Variables & Instances
     @IBOutlet weak var tableView: UITableView!
@@ -32,7 +34,7 @@ class GamesViewController: UIViewController, UITableViewDelegate, UITableViewDat
         super.viewDidLoad()
         clearData()
        performFetch()
-//        tableView.contentInset = UIEdgeInsets(top: 20, left: 0, bottom: 0, right: 0)
+
 }
    
     
@@ -144,6 +146,8 @@ extension GamesViewController {
     
 }
 
+
+
 //MARK: - Table View Data Source
 extension GamesViewController {
     func numberOfSections(in tableView: UITableView) -> Int {
@@ -225,15 +229,6 @@ func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, 
         fatalError("Unhandled switch case of NSFetchedResultsChangeType")
     }
 }
-
-
-//     func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange anObject: Any, at indexPath: IndexPath?, for type: NSFetchedResultsChangeType, newIndexPath: IndexPath?) {
-//            switch type {
-//            case .insert: tableView.insertRows(at: [newIndexPath!], with: .automatic)
-//            case .delete: tableView.deleteRows(at: [indexPath!], with: .automatic)
-//            default: break
-//            }
-//        print("Did change table....")
 
 func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange sectionInfo: NSFetchedResultsSectionInfo, atSectionIndex sectionIndex: Int, for type: NSFetchedResultsChangeType) {
     switch type {
