@@ -11,9 +11,6 @@ import CoreData
 
 class GamesViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
 
-    //TRY TO GET DATE INTO THIS SHIT!!!
-    //GET TO PLAYER PAGE BY TOMR!!!
-    
     
     //MARK: - Variables & Instances
     @IBOutlet weak var tableView: UITableView!
@@ -35,6 +32,7 @@ class GamesViewController: UIViewController, UITableViewDelegate, UITableViewDat
         super.viewDidLoad()
         clearData()
        performFetch()
+//        tableView.contentInset = UIEdgeInsets(top: 20, left: 0, bottom: 0, right: 0)
 }
    
     
@@ -171,10 +169,26 @@ extension GamesViewController {
        return cell
    }
     
+    
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         let sectionInfo = fetchedResultsController.sections![section]
-        return sectionInfo.name.uppercased()
+        return sectionInfo.name
     }
+    
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        let labelRect = CGRect(x: 0, y: 0, width: tableView.bounds.size.width, height: tableView.sectionHeaderHeight)
+        let label = UILabel(frame: labelRect)
+        label.font = UIFont.boldSystemFont(ofSize: 20)
+        label.text = tableView.dataSource?.tableView?(tableView, titleForHeaderInSection: section)
+        label.textColor = UIColor(white: 1.0, alpha: 0.8)
+        label.backgroundColor = UIColor(red: 218/255.0, green: 161/255.0, blue: 160/255.0 , alpha: 1.0)
+        let viewRect = CGRect(x: 0, y: 0, width: tableView.bounds.size.width, height: tableView.sectionHeaderHeight)
+        let view = UIView(frame: viewRect)
+        view.addSubview(label)
+
+        return view
+    }
+    
 
 }
 
