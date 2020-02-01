@@ -12,5 +12,6 @@ import CoreData
 
 @objc(VisitorTeam)
 public class VisitorTeam: NSManagedObject {
+    
 
 }

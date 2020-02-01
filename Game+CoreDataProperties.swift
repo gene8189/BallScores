@@ -25,5 +25,6 @@ extension Game {
     @NSManaged public var gameTime: String?
     @NSManaged public var homeTeam: HomeTeam?
     @NSManaged public var visitorTeam: VisitorTeam?
+    
 
 }

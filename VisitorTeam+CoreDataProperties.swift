@@ -21,5 +21,6 @@ extension VisitorTeam {
     @NSManaged public var fullName: String?
     @NSManaged public var id: Int32
     @NSManaged public var game: Game?
+    
 
 }

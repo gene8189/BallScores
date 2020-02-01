@@ -32,10 +32,42 @@ class GamesViewController: UIViewController, UITableViewDelegate, UITableViewDat
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        clearData()
-       performFetch()
+        
+        findPageNumber()
+        
+        
 
 }
+    
+    
+    func findPageNumber() {
+        let url = URL(string: "https://balldontlie.io/api/v1/games")!
+        let session = URLSession.shared
+        let task = session.dataTask(with: url) { data,response,error in
+            if error != nil || data == nil {
+                print("Client error!")
+                              return
+                       }
+                       guard let response = response as? HTTPURLResponse, (200...299).contains(response.statusCode) else {
+                       print("Server error!")
+                       return
+                       }
+                       guard let mime = response.mimeType, mime == "application/json" else {
+                       print("Wrong MIME type!")
+                       return
+                       }
+                       do {
+                       let jsonDict = try JSONSerialization.jsonObject(with: data!, options: [.allowFragments]) as! [String:Any]
+                       DispatchQueue.main.async {
+                        let metaDict = jsonDict["meta"] as! [String:Any]
+                        print(metaDict)
+            }
+                       } catch let error as NSError {
+                        print(error)
+            }
+            
+    }
+    }
    
     
     
@@ -70,7 +102,7 @@ extension GamesViewController {
         let homeFetchRequest = NSFetchRequest<HomeTeam>(entityName: "HomeTeam")
         let visitorFetchRequest = NSFetchRequest<VisitorTeam>(entityName: "VisitorTeam")
         let count = try! coreDataStack.managedContext.count(for:gameFetchRequest)
-//        guard count == 0 else { return }
+        guard count == 0 else { return }
         do {
             let games = try coreDataStack.managedContext.fetch(gameFetchRequest)
             let homes = try coreDataStack.managedContext.fetch(homeFetchRequest)
@@ -84,9 +116,10 @@ extension GamesViewController {
             print("Error fetching: \(error), \(error.userInfo)")
         }
     }
-        
+    
+            
     func importJSON() {
-        let url = URL(string: "https://balldontlie.io/api/v1/games?page=1950")!
+        let url = URL(string: "https://balldontlie.io/api/v1/games?page=1951")!
        let session = URLSession.shared
        let task = session.dataTask(with: url) { data,response,error in
            if error != nil || data == nil {

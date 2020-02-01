@@ -12,5 +12,6 @@ import CoreData
 
 @objc(HomeTeam)
 public class HomeTeam: NSManagedObject {
+    
 
 }
