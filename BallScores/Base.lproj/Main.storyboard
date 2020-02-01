@@ -37,7 +37,7 @@
                                                             <rect key="frame" x="256" y="0.0" width="120" height="120"/>
                                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                         </imageView>
-                                                        <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="Atlanta Hawks" translatesAutoresizingMaskIntoConstraints="NO" id="FUx-zh-vJ1">
+                                                        <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="1627759" translatesAutoresizingMaskIntoConstraints="NO" id="FUx-zh-vJ1">
                                                             <rect key="frame" x="0.0" y="0.0" width="120" height="120"/>
                                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                         </imageView>
@@ -132,7 +132,7 @@
         </scene>
     </scenes>
     <resources>
-        <image name="Atlanta Hawks" width="150" height="100"/>
+        <image name="1627759" width="260" height="190"/>
         <image name="Boston Celtics" width="150" height="100"/>
         <image name="infoBalls" width="2484" height="4416"/>
     </resources>
